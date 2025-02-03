@@ -1,6 +1,4 @@
 @Library('k8s-shared-lib') _
-// Import warnings-ng plugin for trivy scanning
-@Library('warnings-ng') _
 pipeline {
     agent none
     environment {
@@ -8,7 +6,7 @@ pipeline {
         IMAGE_TAG = "latest"
         DOCKER_HUB_REPO = "naivedh/owasp-zap"
         DOCKER_CREDENTIALS = "docker_hub_up"
-        REPORT_FILE = "trivy-report.json"
+        REPORT_FILE = "trivy-report.sarif"
     }
 
     stages {
@@ -74,7 +72,7 @@ pipeline {
                         sh "trivy image ${IMAGE_NAME}:${IMAGE_TAG} --timeout 30m --format json --output ${REPORT_FILE} --debug"
                         recordIssues(
                             enabledForFailure: true,
-                            tool: trivy(pattern: "${env.REPORT_FILE}", id: "TRIVY-SARIF", name: "Trivy-Report" ))
+                            tool: sarif(pattern: "${env.REPORT_FILE}", id: "TRIVY-SARIF", name: "Trivy-Report" ))
                         archiveArtifacts artifacts: "${env.REPORT_FILE}", fingerprint: true
                     }
                 }
