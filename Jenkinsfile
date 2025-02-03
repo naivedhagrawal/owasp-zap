@@ -1,4 +1,6 @@
 @Library('k8s-shared-lib') _
+// Import warnings-ng plugin for trivy scanning
+@Library('warnings-ng') _
 pipeline {
     agent none
     environment {
@@ -70,7 +72,10 @@ pipeline {
                         sh "trivy image --download-db-only --timeout 60m --debug"
                         echo "Scanning image with Trivy..."
                         sh "trivy image ${IMAGE_NAME}:${IMAGE_TAG} --timeout 30m --format json --output ${REPORT_FILE} --debug"
-                        archiveArtifacts artifacts: "${REPORT_FILE}", fingerprint: true
+                        recordIssues(
+                            enabledForFailure: true,
+                            tool: trivy(pattern: "${env.REPORT_FILE}", id: "TRIVY-SARIF", name: "Trivy-Report" ))
+                        archiveArtifacts artifacts: "${env.REPORT_FILE}", fingerprint: true
                     }
                 }
             }
