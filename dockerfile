@@ -1,4 +1,4 @@
-FROM zaproxy/zap-stable
+FROM zaproxy/zap-weekly:latest
 
 # Set zap user and group IDs
 USER root
