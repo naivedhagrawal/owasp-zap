@@ -8,7 +8,6 @@ RUN mkdir -p /zap/wrk && \
     chown -R zap:zap /zap/wrk && \
     chmod -R 777 /zap/wrk
 
-RUN zap.sh -addoninstall reports
 # Switch back to zap user
 USER zap
 
