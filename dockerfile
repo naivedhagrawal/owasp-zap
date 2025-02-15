@@ -5,7 +5,9 @@ USER root
 
 # Install dependencies
 RUN apt-get update && apt-get install -y python3-pip git && \
-    pip3 install --break-system-packages zap-cli && \
+    pip3 install --break-system-packages --upgrade wheel setuptools && \
+    git clone https://github.com/Grunny/zap-cli.git /opt/zap-cli && \
+    pip3 install --break-system-packages /opt/zap-cli && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Fix permissions for zap user
