@@ -3,12 +3,14 @@ FROM zaproxy/zap-weekly:latest
 # Set zap user and group IDs
 USER root
 
-# Check if Python is installed, if not, install it
-RUN if ! command -v python3 &> /dev/null; then \
-        apt-get update && apt-get install -y python3-pip; \
-    fi && \
-    pip3 install zap-cli && \
+# Create a virtual environment and install zap-cli
+RUN apt-get update && apt-get install -y python3-venv && \
+    python3 -m venv /opt/zap-cli-venv && \
+    /opt/zap-cli-venv/bin/pip install --no-cache-dir zap-cli && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Set environment variables to use zap-cli easily
+ENV PATH="/opt/zap-cli-venv/bin:$PATH"
 
 # Fix permissions for zap user
 RUN mkdir -p /zap/wrk && \
